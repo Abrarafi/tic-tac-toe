@@ -59,7 +59,6 @@ button:hover {
   border: 1px solid rgba(211, 211, 211, 0.4) !important;
 }
 
-
 .grid {
   display: grid;
   grid-template-columns: repeat(3, 80px);
@@ -169,7 +168,11 @@ button:hover {
 }
 
 .score {
-  background-color: blue;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  border-radius: 10px;
 }
 .actions {
   background-color: purple;
