@@ -8,13 +8,32 @@
     <meta name="description" content="" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="stylesheet" href="css/index.css" />
+    <script
+      src="https://kit.fontawesome.com/3bfd3ce9e5.js"
+      crossorigin="anonymous"
+    ></script>
   </head>
   <body>
-    <script src="" async defer></script>
     <main>
       <div class="grid">
-        <div class="turn"></div>
-        <div class="actions"></div>
+        <!-- turn indicator -->
+        <div class="turn">
+          <i class="fa-solid fa-x turqouise"></i>
+          <p>Player 1, you're up!</p>
+        </div>
+
+        <!-- Dropdown Menu -->
+        <div class="menu" data-id="menu">
+          <button class="menu-btn" data-id="menu-btn">
+            Actions
+            <i class="fa-solid fa-chevron-down"></i>
+          </button>
+
+          <div class="items border hidden" data-id="menu-items">
+            <button data-id="reset-btn">Reset</button>
+            <button data-id="new-round-btn">New Round</button>
+          </div>
+        </div>
         <div class="square"></div>
         <div class="square"></div>
         <div class="square"></div>
@@ -36,7 +55,7 @@
         <a href="https://twitter.com/megfdev">@megfdev</a> and
         <a href="https://twitter.com/Ivan00sto">@Ivan00Sto</a>
       </p>
-  
+
       <p>
         Refactored by
         <a href="https://github.com/Abrarafi" style="color: var(--turquoise)"
@@ -45,5 +64,4 @@
       </p>
     </footer>
   </body>
- 
 </html>
