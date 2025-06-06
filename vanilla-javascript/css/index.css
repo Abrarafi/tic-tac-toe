@@ -37,6 +37,16 @@ body {
   grid-template-rows: 50px repeat(3, 80px) 60px;
   gap: 5px;
 }
+
+@media (min-width: 768px) {
+  .grid {
+    width: 490px;
+    grid-template-columns: repeat(3, 150px);
+    grid-template-rows: 50px repeat(3, 150px) 60px;
+    gap: 20px;
+  }
+}
+
 .turn {
   background-color: green;
   grid-column-start: 1;
