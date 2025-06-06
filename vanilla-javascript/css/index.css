@@ -32,9 +32,33 @@ body {
 }
 
 /* shared utility class */
-.turqouise{
+
+button:hover {
+  cursor: pointer;
+  opacity: 90%;
+}
+
+.hidden {
+  display: none !important;
+}
+
+.yellow {
+  color: var(--yellow);
+}
+
+.turquoise {
   color: var(--turquoise);
 }
+
+.shadow {
+  box-shadow: rgba(0, 0, 0, 0.4) 0px 2px 4px,
+    rgba(0, 0, 0, 0.3) 0px 7px 13px -3px, rgba(0, 0, 0, 0.2) 0px -3px 0px inset;
+}
+
+.border {
+  border: 1px solid rgba(211, 211, 211, 0.4) !important;
+}
+
 
 .grid {
   display: grid;
@@ -93,9 +117,57 @@ body {
   margin-left: 10px;
   animation: 0.6s ease-in-out turn-icon-animation;
 }
-.square {
-  background-color: red;
+
+/* Menu button */
+.menu {
+  position: relative;
 }
+
+.menu-btn {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  border-radius: 10px;
+  color: white;
+  background-color: rgba(211, 211, 211, 0.05);
+  border: 1px solid transparent;
+}
+.items {
+  position: absolute;
+  z-index: 10;
+  top: 60px;
+  right: 0;
+  background-color: #203139;
+  border-radius: 2px;
+  padding: 10px;
+}
+.items button {
+  background-color: transparent;
+  padding: 8px;
+  color: white;
+}
+
+.items button:hover {
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+/* Square style */
+.square {
+  background-color: var(--gray);
+  border-radius: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 3rem;
+}
+.square:hover {
+  cursor: pointer;
+  opacity: 90%;
+}
+
 .score {
   background-color: blue;
 }
