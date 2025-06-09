@@ -67,9 +67,9 @@ const App = {
     });
 
     App.$.modalBtn.addEventListener("click", (event) => {
-        App.state.moves = [];
-        App.$.squares.forEach((square) => square.replaceChildren());
-        App.$.modal.classList.add("hidden");
+      App.state.moves = [];
+      App.$.squares.forEach((square) => square.replaceChildren());
+      App.$.modal.classList.add("hidden");
     });
 
     App.$.squares.forEach((square) => {
@@ -94,33 +94,42 @@ const App = {
           App.state.moves.length === 0
             ? 1
             : getOppositePlayer(lastMove.playerId);
+        const nextPlayer = getOppositePlayer(currentPlayer);
 
-        const icon = document.createElement("i");
+        const squareIcon = document.createElement("i");
+        const turnIcon = document.createElement("i");
+        const turnLabel = document.createElement("p");
+        turnLabel.innerText = `Player ${nextPlayer}, you are up!`;
 
         if (currentPlayer === 1) {
-          icon.classList.add("fa-solid", "fa-x", "yellow");
+          squareIcon.classList.add("fa-solid", "fa-x", "yellow");
+          turnIcon.classList.add("fa-solid", "fa-o", "turquoise");
+          turnLabel.classList.add("turquoise");
+
         } else {
-          icon.classList.add("fa-solid", "fa-o", "turquoise");
+          squareIcon.classList.add("fa-solid", "fa-o", "turquoise");
+          turnIcon.classList.add("fa-solid", "fa-x", "yellow");
+          turnLabel.classList.add("yellow");
         }
+        this.$.turn.replaceChildren(turnIcon,turnLabel);
 
         App.state.moves.push({
           squareId: +square.id,
           playerId: currentPlayer,
         });
 
-        square.replaceChildren(icon);
+        square.replaceChildren(squareIcon);
         // console.log(App.state);
         const game = this.getGameStatus(this.state.moves);
-        if(game.status === "complete"){
-            App.$.modal.classList.remove("hidden");
-            let message = '';
-            if(game.winner){
-                message = `Player ${game.winner} wins!`;
-            }
-            else{
-                message = 'Tie Game!';
-            }
-            App.$.modalText.textContent = message;
+        if (game.status === "complete") {
+          App.$.modal.classList.remove("hidden");
+          let message = "";
+          if (game.winner) {
+            message = `Player ${game.winner} wins!`;
+          } else {
+            message = "Tie Game!";
+          }
+          App.$.modalText.textContent = message;
         }
       });
     });
