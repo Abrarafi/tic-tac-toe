@@ -1,4 +1,4 @@
-import View from "./view";
+import View from "./view.js";
 const App = {
   $: {
     menu: document.querySelector('[data-id = "menu"]'),
@@ -50,6 +50,7 @@ const App = {
 
   init() {
     App.registerEventListener();
+    console.log("click");
   },
 
   registerEventListener() {
@@ -106,13 +107,12 @@ const App = {
           squareIcon.classList.add("fa-solid", "fa-x", "yellow");
           turnIcon.classList.add("fa-solid", "fa-o", "turquoise");
           turnLabel.classList.add("turquoise");
-
         } else {
           squareIcon.classList.add("fa-solid", "fa-o", "turquoise");
           turnIcon.classList.add("fa-solid", "fa-x", "yellow");
           turnLabel.classList.add("yellow");
         }
-        this.$.turn.replaceChildren(turnIcon,turnLabel);
+        this.$.turn.replaceChildren(turnIcon, turnLabel);
 
         App.state.moves.push({
           squareId: +square.id,
@@ -137,8 +137,10 @@ const App = {
   },
 };
 
-function init() {
+
+function init(){
   const view = new View();
 }
+
 
 window.addEventListener("load", init);
