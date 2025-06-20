@@ -27,6 +27,23 @@ export default class View {
     });
   }
 
+  // Why bind is used? the handler is used with any button possible.
+
+  bindResetGameEvent(handler) {
+    this.$.resetBtn.addEventListener("click", handler);
+    this.$.modalBtn.addEventListener("click", handler);
+  }
+
+  bindNewRoundEvent(handler) {
+    this.$.newRoundBtn.addEventListener("click", handler);
+  }
+
+  bindPlayerMoveEvent(handler) {
+    this.#delegate(this.$.grid, '[data-id = "square"]', "click", handler);
+  }
+
+  //Private utility methods
+
   #qs(selector, parent) {
     const el = parent
       ? parent.querySelector(selector)
@@ -56,5 +73,13 @@ export default class View {
 
     icon.classList.toggle("fa-chevron-down");
     icon.classList.toggle("fa-chevron-up");
+  }
+
+  #delegate(el, selector, eventKey, handler) {
+    el.addEventListener(eventKey, (event) => {
+      if (event.target.matches(selector)) {
+        handler(event.target);
+      }
+    });
   }
 }
