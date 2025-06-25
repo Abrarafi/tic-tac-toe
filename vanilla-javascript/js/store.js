@@ -5,7 +5,7 @@ const initialState = {
     allGames: [],
   },
 };
-export default class store extends EventTarget {
+export default class Store extends EventTarget {
   constructor(key, player) {
     super();
     this.storageKey = key;
@@ -26,6 +26,9 @@ export default class store extends EventTarget {
           wins,
         };
       }),
+      ties: state.history.currentRoundGames.filter(
+        (game) => game.status.winner === null
+      ).length,
     };
   }
 
@@ -52,7 +55,7 @@ export default class store extends EventTarget {
         .map((move) => move.squareId);
 
       for (const pattern of winningPatterns) {
-        if (pattern.every((v) => selectedSquareIds.include(v))) {
+        if (pattern.every((v) => selectedSquareIds.includes(v))) {
           winner = player;
         }
       }
@@ -97,11 +100,11 @@ export default class store extends EventTarget {
     const stateClone = structuredClone(this.#getState());
     stateClone.history.allGames.push(...stateClone.history.currentRoundGames);
     stateClone.history.currentRoundGames = [];
-    
+
     this.#saveState(stateClone);
   }
 
-  #saveState() {
+  #saveState(stateOrFn) {
     const prevState = this.#getState();
     let newState;
 

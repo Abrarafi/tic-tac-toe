@@ -1,3 +1,4 @@
+
 export default class View {
   $ = {};
   $$ = {};
@@ -19,12 +20,36 @@ export default class View {
     this.$.grid = this.#qs('[data-id = "grid"]');
 
     //elements list
-    this.$$.square = this.#qsAll('[data-id = "square"]');
+    this.$$.squares = this.#qsAll('[data-id = "square"]');
 
     //UI only evenlisteners
     this.$.menuBtn.addEventListener("click", (event) => {
       this.#toggleMenu();
     });
+  }
+
+  render(game, stats) {
+    console.log("stateChange");
+    const { playerWithStats, ties } = stats;
+    const {
+      moves,
+      currentPlayer,
+      status: { isComplete, winner },
+    } = game;
+
+    this.#closeAll();
+    this.#clearMoves();
+    this.#updateScoreBoard(
+      playerWithStats[0].wins,
+      playerWithStats[1].wins,
+      ties
+    );
+    this.#initializeMoves(moves);
+    if (isComplete) {
+      this.#openModal(winner ? `${winner.name} wins!` : "Tie!");
+      return;
+    }
+    this.#setTurnIndicator(currentPlayer);
   }
 
   // Why bind is used? the handler is used with any button possible.
@@ -43,6 +68,11 @@ export default class View {
   }
 
   //Private utility methods
+  #updateScoreBoard(p1Wins, p2Wins, ties) {
+    this.$.p1wins.innerText = `${p1Wins} wins`;
+    this.$.p2wins.innerText = `${p2Wins} wins`;
+    this.$.ties.innerText = `${ties} ties`;
+  }
 
   #qs(selector, parent) {
     const el = parent
@@ -63,6 +93,63 @@ export default class View {
     if (!elist) throw new Error("Could not find the Element!");
 
     return elist;
+  }
+
+  #openModal(message) {
+    this.$.modal.classList.remove("hidden");
+    this.$.modalText.innerText = message;
+  }
+
+  #closeAll() {
+    this.#closeModal();
+    this.#closeMenu();
+  }
+
+  #clearMoves() {
+    this.$$.squares.forEach((square) => {
+      square.replaceChildren();
+    });
+  }
+  #initializeMoves(moves) {
+    this.$$.squares.forEach((square) => {
+      const existingMove = moves.find((move) => move.squareId === +square.id);
+
+      if (existingMove) {
+        this.#handlePlayerMove(square, existingMove.player);
+      }
+    });
+  }
+
+  #closeModal() {
+    this.$.modal.classList.add("hidden");
+  }
+
+  #closeMenu() {
+    this.$.menuItems.classList.add("hidden");
+    this.$.menuBtn.classList.remove("border");
+
+    const icon = this.$.menuBtn.querySelector("i");
+
+    icon.classList.add("fa-chevron-down");
+    icon.classList.remove("fa-chevron-up");
+  }
+
+  #handlePlayerMove(squareEl, player) {
+    const icon = document.createElement("i");
+    icon.classList.add("fa-solid", player.iconClass, player.colorClass);
+    squareEl.replaceChildren(icon);
+  }
+
+  #setTurnIndicator(player) {
+    const icon = document.createElement("i");
+    const label = document.createElement("p");
+
+    icon.classList.add("fa-solid", player.colorClass, player.iconClass);
+
+    label.classList.add(player.colorClass);
+    label.innerText = `${player.name}, you're up!`;
+
+    this.$.turn.replaceChildren(icon, label);
   }
 
   #toggleMenu() {
