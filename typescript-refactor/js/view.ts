@@ -1,7 +1,9 @@
+import Store from "./store";
+import { Game, Move, Player } from "./types";
 
 export default class View {
-  $ = {};
-  $$ = {};
+  $: Record<string, Element> = {};
+  $$: Record<string, NodeListOf<Element>> = {};
 
   constructor() {
     //single Elements
@@ -28,7 +30,7 @@ export default class View {
     });
   }
 
-  render(game, stats) {
+  render(game: Store["game"], stats: Store["stat"]) {
     console.log("stateChange");
     const { playerWithStats, ties } = stats;
     const {
@@ -54,27 +56,27 @@ export default class View {
 
   // Why bind is used? the handler is used with any button possible.
 
-  bindResetGameEvent(handler) {
+  bindResetGameEvent(handler: EventListener) {
     this.$.resetBtn.addEventListener("click", handler);
     this.$.modalBtn.addEventListener("click", handler);
   }
 
-  bindNewRoundEvent(handler) {
+  bindNewRoundEvent(handler: EventListener) {
     this.$.newRoundBtn.addEventListener("click", handler);
   }
 
-  bindPlayerMoveEvent(handler) {
+  bindPlayerMoveEvent(handler: (el:Element)=>void) {
     this.#delegate(this.$.grid, '[data-id = "square"]', "click", handler);
   }
 
   //Private utility methods
-  #updateScoreBoard(p1Wins, p2Wins, ties) {
-    this.$.p1wins.innerText = `${p1Wins} wins`;
-    this.$.p2wins.innerText = `${p2Wins} wins`;
-    this.$.ties.innerText = `${ties} ties`;
+  #updateScoreBoard(p1Wins: number, p2Wins: number, ties: number) {
+    this.$.p1wins.textContent = `${p1Wins} wins`;
+    this.$.p2wins.textContent = `${p2Wins} wins`;
+    this.$.ties.textContent = `${ties} ties`;
   }
 
-  #qs(selector, parent) {
+  #qs(selector: string, parent?: Element) {
     const el = parent
       ? parent.querySelector(selector)
       : document.querySelector(selector);
@@ -87,7 +89,7 @@ export default class View {
     return el;
   }
 
-  #qsAll(selector) {
+  #qsAll(selector: string) {
     const elist = document.querySelectorAll(selector);
 
     if (!elist) throw new Error("Could not find the Element!");
@@ -95,9 +97,9 @@ export default class View {
     return elist;
   }
 
-  #openModal(message) {
+  #openModal(message: string) {
     this.$.modal.classList.remove("hidden");
-    this.$.modalText.innerText = message;
+    this.$.modalText.textContent = message;
   }
 
   #closeAll() {
@@ -110,7 +112,7 @@ export default class View {
       square.replaceChildren();
     });
   }
-  #initializeMoves(moves) {
+  #initializeMoves(moves: Move[]) {
     this.$$.squares.forEach((square) => {
       const existingMove = moves.find((move) => move.squareId === +square.id);
 
@@ -128,19 +130,20 @@ export default class View {
     this.$.menuItems.classList.add("hidden");
     this.$.menuBtn.classList.remove("border");
 
-    const icon = this.$.menuBtn.querySelector("i");
-
+    // const icon = this.$.menuBtn.querySelector("i");
+    //type narrowing
+    const icon = this.#qs("i", this.$.menuBtn);
     icon.classList.add("fa-chevron-down");
     icon.classList.remove("fa-chevron-up");
   }
 
-  #handlePlayerMove(squareEl, player) {
+  #handlePlayerMove(squareEl: Element, player: Player) {
     const icon = document.createElement("i");
     icon.classList.add("fa-solid", player.iconClass, player.colorClass);
     squareEl.replaceChildren(icon);
   }
 
-  #setTurnIndicator(player) {
+  #setTurnIndicator(player: Player) {
     const icon = document.createElement("i");
     const label = document.createElement("p");
 
@@ -156,14 +159,24 @@ export default class View {
     this.$.menuItems.classList.toggle("hidden");
     this.$.menuBtn.classList.toggle("border");
 
-    const icon = this.$.menuBtn.querySelector("i");
+    // const icon = this.$.menuBtn.querySelector("i");
+    const icon = this.#qs("i", this.$.menuBtn);
 
     icon.classList.toggle("fa-chevron-down");
     icon.classList.toggle("fa-chevron-up");
   }
 
-  #delegate(el, selector, eventKey, handler) {
+  #delegate(
+    el: Element,
+    selector: string,
+    eventKey: string,
+    handler: (el: Element) => void
+  ) {
     el.addEventListener(eventKey, (event) => {
+      if (!(event.target instanceof Element)) {
+        throw new Error("Event target not found");
+      }
+
       if (event.target.matches(selector)) {
         handler(event.target);
       }
