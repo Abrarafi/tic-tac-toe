@@ -1,22 +1,25 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import "./App.css";
 import Footer from "./components/Footer";
 import Menu from "./components/Menu";
 import Modal from "./components/Modal";
-import { GameState, Player } from "./types";
+import { GameMode, GameState, Player } from "./types";
 import classNames from "classnames";
 import { useLocalStorage } from "./useLocalStorage";
-import { deriveGame, deriveStats } from "./utils";
-
+import { deriveGame, deriveStats, players } from "./utils";
+import { findBestMove } from "./ai";
 
 export default function App() {
-  const [state, setState] = useLocalStorage<GameState>("game-state-key",{
+  const [state, setState] = useLocalStorage<GameState>("game-state-key", {
     currentGameMoves: [],
     history: {
       currentRoundGames: [],
       allGames: [],
     },
+    mode: "pvp",
   });
+  const [showModeSelection, setShowModeSelection] = useState(true);
+  const [isComputerMoving, setIsComputerMoving] = useState(false);
 
   const game = deriveGame(state);
   const stats = deriveStats(state);
@@ -39,12 +42,15 @@ export default function App() {
           ...stateClone.history.currentRoundGames
         );
         stateClone.history.currentRoundGames = [];
+        setShowModeSelection(true);
       }
+
       return stateClone;
     });
   }
 
   function handlePlayerMove(squareId: number, player: Player) {
+    if (isComputerMoving) return;
     setState((prev) => {
       const stateClone = structuredClone(prev);
       stateClone.currentGameMoves.push({
@@ -55,11 +61,79 @@ export default function App() {
     });
   }
 
-  const showModal = false;
+  function selectMode(mode: GameMode) {
+    resetGame(true);
+    setState((prev) => {
+      const stateClone = structuredClone(prev);
+      stateClone.mode = mode;
+      stateClone.currentGameMoves = [];
+      console.log(stateClone);
+      console.log(game);
+      console.log(isComputerMoving);
+      return stateClone;
+    });
+    setShowModeSelection(false);
+  }
+
+  useEffect(() => {
+  // Only proceed if it's computer's turn in PVC mode
+  if (
+    state.mode !== "pvc" ||
+    game.status.isComplete ||
+    game.currentPlayer.id !== 2 ||
+    isComputerMoving
+  ) {
+    return;
+  }
+
+  setIsComputerMoving(true);
+  console.log("Computer starting to think...");
+
+  const timer = setTimeout(() => {
+    console.log("Computer making move");
+    const bestMove = findBestMove(state);
+    console.log("Best move:", bestMove);
+    
+    setState((prev) => {
+      const stateClone = structuredClone(prev);
+      stateClone.currentGameMoves.push({
+        squareId: bestMove,
+        player: players[1],
+      });
+      return stateClone;
+    });
+    
+    setIsComputerMoving(false);
+  }, 500);
+
+  return () => {
+    console.log("Cleaning up computer move timer");
+    clearTimeout(timer);
+  };
+}, [state.currentGameMoves.length, game.status.isComplete]); // Simplified dependencies
 
   return (
     <>
       <main>
+        {showModeSelection && (
+          <div className="modal">
+            <div className="modal-content">
+              <h2>Select Game Mode</h2>
+              <button
+                className="btn btn-turquoise"
+                onClick={() => selectMode("pvp")}
+              >
+                Player vs Player
+              </button>
+              <button
+                className="btn btn-yellow"
+                onClick={() => selectMode("pvc")}
+              >
+                Player vs Computer
+              </button>
+            </div>
+          </div>
+        )}
         <div className="grid" data-id="grid">
           <div className="turn yellow" data-id="turn">
             <i
@@ -70,7 +144,9 @@ export default function App() {
               )}
             ></i>
             <p className={classNames(game.currentPlayer.colorClass)}>
-              Player {game.currentPlayer.id}, you're up!
+              {state.mode === "pvc" && game.currentPlayer.id === 2
+                ? "Computer's turn"
+                : `Player ${game.currentPlayer.id}, you're up!`}
             </p>
           </div>
 
@@ -86,7 +162,12 @@ export default function App() {
                 key={squareId}
                 className="square shadow"
                 onClick={() => {
-                  if (existingMove) return;
+                  if (
+                    existingMove ||
+                    isComputerMoving ||
+                    (state.mode === "pvc" && game.currentPlayer.id === 2)
+                  )
+                    return;
                   handlePlayerMove(squareId, game.currentPlayer);
                 }}
               >

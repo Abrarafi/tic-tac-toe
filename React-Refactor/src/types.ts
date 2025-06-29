@@ -19,6 +19,7 @@ export type Game = {
   moves: Move[];
   status: GameStatus;
 };
+export type GameMode = 'pvp' | 'pvc';
 
 export type GameState = {
   currentGameMoves: Move[];
@@ -26,4 +27,5 @@ export type GameState = {
     currentRoundGames: Game[];
     allGames: Game[];
   };
+  mode:GameMode;
 };
