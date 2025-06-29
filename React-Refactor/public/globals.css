@@ -24,6 +24,7 @@ body {
 }
 
 body {
+
   padding: 90px 20px;
   display: flex;
   flex-direction: column;
@@ -194,3 +195,23 @@ button:hover {
   transform: scale(1.05);
 }
 
+/* Mode Selector */
+.mode-selector button {
+  margin: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+  border: none;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.mode-selector h2 {
+  font-size: 22px;
+  color: var(--yellow);
+}
+.mode-selector{
+  padding:5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}

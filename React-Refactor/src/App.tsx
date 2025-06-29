@@ -89,7 +89,7 @@ export default function App() {
 
   const timer = setTimeout(() => {
     console.log("Computer making move");
-    const bestMove = findBestMove(state);
+    const bestMove = findBestMove(state,'medium');
     console.log("Best move:", bestMove);
     
     setState((prev) => {
@@ -132,6 +132,25 @@ export default function App() {
             </div>
           </div>
         )}
+        <div className="mode-selector">
+          <h2>Play:</h2>
+          {state.mode === 'pvc'?(
+            <button
+                className="btn btn-turquoise"
+                onClick={() => selectMode("pvp")}
+              >
+                Player vs Player
+              </button>
+          ):
+          (
+            <button
+                className="btn btn-yellow"
+                onClick={() => selectMode("pvc")}
+              >
+                Player vs Computer
+              </button>
+          )}
+        </div>
         <div className="grid" data-id="grid">
           <div className="turn yellow" data-id="turn">
             <i
@@ -186,7 +205,7 @@ export default function App() {
             className="score shadow"
             style={{ backgroundColor: "var(--turquoise)" }}
           >
-            <p>Player 1</p>
+            <p>{state.mode==='pvc'? 'Player':'Player 1'}</p>
             <span data-id="p1-wins">{stats.playerWithStats[0].wins} Wins</span>
           </div>
           <div
@@ -200,7 +219,7 @@ export default function App() {
             className="score shadow"
             style={{ backgroundColor: "var(--yellow)" }}
           >
-            <p>Player 2</p>
+            <p>{state.mode==='pvc'? 'Computer':'Player 2'}</p>
             <span data-id="p2-wins">{stats.playerWithStats[1].wins} Wins</span>
           </div>
         </div>
@@ -211,7 +230,7 @@ export default function App() {
         <Modal
           message={
             game.status.winner
-              ? `Player ${game.status.winner.id} Wins!`
+              ? ` ${game.status.winner.id===2&&state.mode==='pvc'? 'Computer':`Player ${game.status.winner.id}`} Wins!`
               : "Tie!"
           }
           onClick={() => resetGame(false)}

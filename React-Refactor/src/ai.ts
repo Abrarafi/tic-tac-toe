@@ -3,7 +3,7 @@ import { players, deriveGame } from "./utils";
 
 type Difficulty = 'easy' | 'medium' | 'hard';
 
-export function findBestMove(state: GameState, difficulty: Difficulty = 'easy'): number {
+export function findBestMove(state: GameState, difficulty: Difficulty): number {
   const game = deriveGame(state);
   const availableMoves = getAvailableMoves(state);
   
