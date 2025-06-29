@@ -1,20 +1,32 @@
 import { GameState, Player } from "./types";
 import { players, deriveGame } from "./utils";
 
-export function findBestMove(state: GameState): number {
+type Difficulty = 'easy' | 'medium' | 'hard';
+
+export function findBestMove(state: GameState, difficulty: Difficulty = 'easy'): number {
   const game = deriveGame(state);
   const availableMoves = getAvailableMoves(state);
   
-  // If it's the first move, return a corner for better gameplay
   if (state.currentGameMoves.length === 0) {
     return [1, 3, 7, 9][Math.floor(Math.random() * 4)];
+  }
+
+  // Difficulty-based randomness
+  const randomChance = {
+    easy: 0.5,    // 50% chance to make random move
+    medium: 0.2,  // 20% chance
+    hard: 0      // Always optimal
+  }[difficulty];
+
+  if (Math.random() < randomChance) {
+    return availableMoves[Math.floor(Math.random() * availableMoves.length)];
   }
 
   let bestScore = -Infinity;
   let bestMove = -1;
 
   for (const move of availableMoves) {
-    const newState = makeMove(state, move, players[1]); // Computer is player 2
+    const newState = makeMove(state, move, players[1]);
     const score = minimax(newState, 0, false);
     
     if (score > bestScore) {

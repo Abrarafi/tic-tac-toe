@@ -67,11 +67,9 @@ export default function App() {
       const stateClone = structuredClone(prev);
       stateClone.mode = mode;
       stateClone.currentGameMoves = [];
-      console.log(stateClone);
-      console.log(game);
-      console.log(isComputerMoving);
       return stateClone;
     });
+    setIsComputerMoving(false);
     setShowModeSelection(false);
   }
 
