@@ -89,7 +89,7 @@ export default function App() {
 
   const timer = setTimeout(() => {
     console.log("Computer making move");
-    const bestMove = findBestMove(state,'medium');
+    const bestMove = findBestMove(state,'hard');
     console.log("Best move:", bestMove);
     
     setState((prev) => {
@@ -162,7 +162,7 @@ export default function App() {
             ></i>
             <p className={classNames(game.currentPlayer.colorClass)}>
               {state.mode === "pvc" && game.currentPlayer.id === 2
-                ? "Computer's turn"
+                ? "Computer thinking..."
                 : `Player ${game.currentPlayer.id}, you're up!`}
             </p>
           </div>
